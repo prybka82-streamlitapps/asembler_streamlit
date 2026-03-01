@@ -23,34 +23,30 @@ class CommandEditDialog:
 
     def find_dialog(self, command: Command):
 
-        label: str = command.label.lower()
+        class_name: str = command.__class__.__name__
 
-        if "pudełko" in label:
-            return self.write_box
-        
-        if "tekst" in label:
-            return self.write_text
-        
-        if "przejdź" in label:
-            return self.new_line
-        
-        if "wczytaj" in label:
-            return self.read_to_box
-        
-        if "ustaw" in label:
-            return self.set_box
-        
-        if "zwiększ" in label:
-            return self.increase
-        
-        if "zmniejsz" in label:
-            return self.decrease
-        
-        if "jeżeli" in label:
-            return self.if_
-        
-        if "skocz" in label:
-            return self.go_to
+        match class_name:
+            case "WriteBox":
+                return self.write_box
+            case "WriteText":
+                return self.write_text
+            case "NewLine":
+                return self.new_line
+            case "ReadToBox":
+                return self.read_to_box
+            case "SetBox":
+                return self.set_box
+            case "Increase":
+                return self.increase
+            case "Decrease":
+                return self.decrease
+            case "If":
+                return self.if_
+            case "GoTo":
+                return self.go_to
+            
+            case _:
+                raise ValueError(f"Cannot find a proper dialog for {class_name} dialog!")
 
     def _set_value_or_box(
             self,
