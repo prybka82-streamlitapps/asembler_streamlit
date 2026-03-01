@@ -79,22 +79,22 @@ class CodeContainer:
 
     def delete_cmd(self, id: int):
 
-        for cmd_id, cmd in enumerate(self.asembler.program):
+        # for cmd_id, cmd in enumerate(self.asembler.program):
 
-            if cmd.__class__.__name__ == "If":
+        #     if cmd.__class__.__name__ == "If":
                 
-                if_cmd: If = cast(If, cmd)
+        #         if_cmd: If = cast(If, cmd)
 
-                if if_cmd.go_to_if_true == id:
-                    if_cmd.go_to_if_true -= 1
+        #         if if_cmd.go_to_if_true == id:
+        #             if_cmd.go_to_if_true -= 1
 
-                if if_cmd.go_to_if_false == id:
-                    if_cmd.go_to_if_false -= 1
+        #         if if_cmd.go_to_if_false == id:
+        #             if_cmd.go_to_if_false -= 1
 
-            elif cmd.__class__.__name__ == "GoTo":
-                goto_cmd: GoTo = cast(GoTo, cmd)
+        #     elif cmd.__class__.__name__ == "GoTo":
+        #         goto_cmd: GoTo = cast(GoTo, cmd)
 
-                if goto_cmd.value == id:
-                    goto_cmd.value -= 1
+        #         if goto_cmd.value == id:
+        #             goto_cmd.value -= 1
 
         self.asembler.delete_cmd(id)
