@@ -1,4 +1,4 @@
 from typing import Literal
 
 
-type Condition = Literal["=", "≠", ">", "<", "≤", "≥"]
+type Condition = Literal["=", "≠", "﹥", "﹤", "≤", "≥"]

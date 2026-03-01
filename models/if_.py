@@ -98,11 +98,11 @@ class If[BoxOrValue](Command):
         foo: Callable
 
         match self.condition:
-            case "<":
+            case "﹤":
                 foo = lambda a, b: a<b
             case "=":
                 foo = lambda a, b: a==b
-            case ">":
+            case "﹥":
                 foo = lambda a, b: a>b
             case "≠":
                 foo = lambda a, b: a!=b

@@ -216,7 +216,7 @@ class CommandEditDialog:
 
         condition: str|None = st.pills(
             "Wybierz warunek:",
-            ["=", "≠", "<", "≤", r"\>", "≥"],
+            ["=", "≠", "﹤", "≤", "﹥", "≥"],
             selection_mode="single",
             default=if_cmd.condition if command else "=",
             key="selected_condition",
