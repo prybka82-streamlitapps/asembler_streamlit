@@ -33,11 +33,17 @@ class ReadToBox(Command):
         return self._foo
     
     def _foo(self, asembler: "Asembler") -> None:
+
+        if asembler.is_fast_forwarding == "yes":
+            asembler.is_fast_forwarding = "paused"
         
-        self._dialog(asembler, self._box)
+        answer: bool = self._dialog(asembler, self._box)
+
+        if asembler.is_fast_forwarding == "paused" and answer:
+            asembler.is_fast_forwarding = "yes"
 
     @st.dialog("Podaj liczbę")
-    def _dialog(self, asembler: "Asembler", box: str):
+    def _dialog(self, asembler: "Asembler", box: str) -> bool:
         number: int|None = st.number_input(
             "Liczba",
             format="%d",
@@ -51,4 +57,8 @@ class ReadToBox(Command):
             )
             asembler.current_step += 1
             st.rerun()
+
+            return True
+        else:
+            return False
 

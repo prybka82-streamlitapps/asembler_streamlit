@@ -4,7 +4,7 @@ from io import StringIO
 
 import streamlit as st
 
-from asembler import Asembler
+from asembler import Asembler, MAX_STEP
 
 
 class Start:
@@ -21,10 +21,16 @@ class Start:
                 on_click=self.asembler.start,
             )
             st.button(
-                "Idź dalej",
+                "Zrób krok",
                 icon="⏭️",
                 disabled=not self.asembler.is_running,
-                on_click=self.asembler.next,
+                on_click=self.asembler.next_step,
+            )
+            st.button(
+                "Idź do końca",
+                icon="⏩",
+                disabled=not self.asembler.is_running,
+                on_click=self.asembler.fast_forward,
             )
             st.button(
                 "Stop",
@@ -34,6 +40,13 @@ class Start:
                 on_click=self.asembler.stop,
             )
 
+            st.button(
+                "Nowy",
+                icon="🆕",
+                type="secondary",
+                on_click=self.new_program,
+                disabled=self.asembler.is_running
+            )
             st.button(
                 "Edytuj",
                 icon="🛠️",
@@ -57,6 +70,9 @@ class Start:
                 disabled=self.asembler.is_running
             )
 
+        if self.asembler.is_max_step_exceeded:
+            st.error(f"Wykonano ponad {MAX_STEP} kroków. Sprawdź program: może zawierać pętlę nieskończoną.")
+
         boxes, code, console = st.columns([1, 3, 2])
 
         with boxes.container(border=True):
@@ -68,6 +84,9 @@ class Start:
 
         with code.container(border=True):
             st.header("Program")
+
+            if self.asembler.step_counter:
+                st.text(f"Wykonano {self.asembler.step_counter} kroków.")
 
             with st.container(
                 horizontal_alignment="left",
@@ -119,4 +138,16 @@ class Start:
         file_name: str = f"program_{sufix}.txt"
 
         return file_name
+    
+    def new_program(self):
+
+        if self.asembler.program:
+            self.new_confirmation()
+
+    @st.dialog("Potwierdź skasowanie programu")
+    def new_confirmation(self):
+        
+        if st.button("Tak, skasuj", type="primary"):
+            self.asembler.new()
+            st.rerun()
 

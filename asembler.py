@@ -1,5 +1,6 @@
 from typing import Generic, Literal, TypeVar
 import json
+import time
 
 from models.box import Box
 from models.condition import Condition
@@ -18,6 +19,10 @@ from enums.personas import Persona
 from helpers.encoder import encode_asembler
 
 
+NEXT_STEP_DELAY_SEC: int = 1
+MAX_STEP: int = 1_000
+
+
 class Asembler(Generic[BoxOrValue]):
 
     def __init__(self):
@@ -31,8 +36,12 @@ class Asembler(Generic[BoxOrValue]):
 
         self.program: list[Command] = []
         self.is_running: bool = False
+        self.is_fast_forwarding: Literal["yes", "paused", "no"] = "no"
         self.current_step: int = -1
         self.console_messages: list[tuple[Persona, str]] = []
+
+        self.step_counter: int = 0
+        self.is_max_step_exceeded: bool = False
 
     @property
     def command_count(self) -> int:
@@ -51,22 +60,48 @@ class Asembler(Generic[BoxOrValue]):
             self.console_messages.append(msg)
         else:
             self.console_messages[-1] = msg
+
+    def new(self):
+        self._clear_boxes()
+        self.program = []
+        self.console_messages = []
+        self.step_counter = 0
+        self.is_running = False
+        self.current_step
+        self.is_max_step_exceeded = False
     
     def start(self):
         self.is_running=True
         self.current_step=0
         self.console_messages = []
         self._clear_boxes()
+        self.step_counter = 0
+        self.is_max_step_exceeded = False
 
     def stop(self):
         self.is_running=False
         self.current_step=-1
 
-    def next(self):
+    def next_step(self):
+        self.step_counter += 1
         if self.current_step < self.command_count and self.current_step >= 0:
             self.program[self.current_step].function(self)
         else:
             self.stop()
+    
+    def fast_forward(self):
+
+        self.is_fast_forwarding = "yes"
+
+        while self.is_running and self.is_fast_forwarding == "yes":
+            self.next_step()
+            
+            if self.step_counter > MAX_STEP:
+                self.stop()
+                self.is_max_step_exceeded = True
+
+            
+
 
     def add_user_msg(self, msg: str) -> None:
         self.console_messages.append(
